@@ -1,36 +1,24 @@
 package com.example;
 
-import org.junit.Before;
 import org.junit.Test;
-import java.util.Arrays;
-import java.util.List;
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+
+import java.util.List;
 
 public class CatTest {
 
-    private Feline mockFeline;
-    private Cat cat;
-
-    @Before
-    public void setUp() {
-        mockFeline = mock(Feline.class);
-        cat = new Cat(mockFeline);
-    }
-
     @Test
-    public void testGetSoundReturnsMeow() {
+    public void testGetSound() {
+        Feline feline = new Feline();
+        Cat cat = new Cat(feline);
         assertEquals("Мяу", cat.getSound());
     }
 
     @Test
-    public void testGetFoodCallsEatMeat() throws Exception {
-        List<String> expectedFood = Arrays.asList("Животные", "Птицы", "Рыба");
-        when(mockFeline.eatMeat()).thenReturn(expectedFood);
-
-        List<String> actualFood = cat.getFood();
-
-        assertEquals(expectedFood, actualFood);
-        verify(mockFeline, times(1)).eatMeat();
+    public void testGetFood() throws Exception {
+        Feline feline = new Feline();
+        Cat cat = new Cat(feline);
+        List<String> food = cat.getFood();
+        assertEquals(List.of("Животные", "Птицы", "Рыба"), food);
     }
 }

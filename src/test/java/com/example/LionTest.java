@@ -2,40 +2,51 @@ package com.example;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
-import java.util.Arrays;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+
 import java.util.List;
-import static org.junit.Assert.*;
+
 import static org.mockito.Mockito.*;
+import static org.junit.Assert.*;
 
 public class LionTest {
 
-    private Feline mockFeline;
-    private Lion lion;
+    @Mock
+    Feline mockedFeline;
+
+    Lion lion;
 
     @Before
     public void setUp() throws Exception {
-        mockFeline = mock(Feline.class);
-        when(mockFeline.getKittens()).thenReturn(2);
-        when(mockFeline.getFood("Хищник")).thenReturn(Arrays.asList("Животные", "Птицы", "Рыба"));
-
-        lion = new Lion("Самец", mockFeline);
+        MockitoAnnotations.initMocks(this); // инициализация моков
+        lion = new Lion("Самец", mockedFeline); // передаем мок в конструктор
     }
 
     @Test
-    public void testGetKittensReturnsCorrectValue() {
-        assertEquals(2, lion.getKittens());
+    public void testDoesHaveMane() {
+        assertTrue(lion.doesHaveMane());
     }
 
     @Test
-    public void testGetFoodCallsFelineGetFood() throws Exception {
-        List<String> actualFood = lion.getFood();
-        assertEquals(Arrays.asList("Животные", "Птицы", "Рыба"), actualFood);
-        verify(mockFeline, times(1)).getFood("Хищник");
+    public void testGetKittens() {
+        when(mockedFeline.getKittens()).thenReturn(3); // мокаем метод getKittens()
+        assertEquals(3, lion.getKittens());
     }
 
-    @Test(expected = Exception.class)
-    public void testLionConstructorThrowsExceptionForInvalidSex() throws Exception {
-        new Lion("Неизвестный", mockFeline);
+    @Test
+    public void testGetFood() throws Exception {
+        when(mockedFeline.getFood("Хищник")).thenReturn(List.of("Животные", "Птицы", "Рыба"));
+        assertEquals(List.of("Животные", "Птицы", "Рыба"), lion.getFood());
+    }
+
+    @Test
+    public void testLionWithInvalidSex() {
+        try {
+            new Lion("Неизвестный", mockedFeline); // Проверяем исключение на неправильный пол
+            fail("Ожидалось исключение");
+        } catch (Exception e) {
+            assertEquals("Используйте допустимые значения пола животного - самец или самка", e.getMessage());
+        }
     }
 }
